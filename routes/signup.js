@@ -35,7 +35,14 @@ router.post('/', function (req, res, next) {
           code: 40000,
           message: '用户登录成功',
           result: {
-            token: token.token
+            token: token.token,
+            user: {
+              _id: user._id,
+              username: user.username,
+              nickname: user.nickname,
+              gender: user.gender,
+              avatar: user.avatar
+            }
           }
         });
       });
