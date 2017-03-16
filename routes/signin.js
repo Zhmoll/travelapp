@@ -26,7 +26,7 @@ router.post('/', function (req, res, next) {
       if (err) return next(err);
       res.setHeader('Authorization', token.token);
       res.json({
-        type: 'succees',
+        type: 'success',
         code: 41000,
         message: '登录成功',
         result: {

@@ -13,7 +13,7 @@ var tokenSchema = new Schema({
 tokenSchema.statics.createToken = function (userid, cb) {
   var newToken = tokenGen.generate(userid, {
     secret: config.token.secret,
-    timeStep: config.token.maxAge
+    timeStep: config.token.timeStep
   });
 
   this.create({
@@ -21,6 +21,13 @@ tokenSchema.statics.createToken = function (userid, cb) {
     userid: new mongoose.Types.ObjectId(userid)
   }, function (err, token) {
     cb(err, token);
+  });
+};
+
+tokenSchema.statics.destroyUserToken = function (userid, cb) {
+  this.deleteMany({ userid: new mongoose.Types.ObjectId(userid) }, function (err) {
+    if (err) return cb(err);
+    cb();
   });
 };
 
