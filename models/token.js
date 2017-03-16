@@ -6,7 +6,8 @@ var config = require('config-lite');
 
 var tokenSchema = new Schema({
   token: { type: String, index: true },
-  userid: { type: Schema.ObjectId }
+  userid: { type: Schema.ObjectId },
+  createdAt: { type: Date, expires: config.token.maxAge }
 });
 
 tokenSchema.statics.createToken = function (userid, cb) {
