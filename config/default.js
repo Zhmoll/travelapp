@@ -3,6 +3,6 @@ module.exports = {
   mongodb: 'mongodb://localhost:27017/travel',
   token: {
     secret: 'zhmolldashuaibi',
-    maxAge: 3600 * 24 * 7
+    maxAge: 60 * 24
   }
 };

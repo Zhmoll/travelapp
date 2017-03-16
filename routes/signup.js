@@ -29,20 +29,18 @@ router.post('/', function (req, res, next) {
 
       Token.createToken(user.id, function (err, token) {
         if (err) return next(err);
-
+        res.setHeader('Authorization', token.token);
         res.json({
-          type: 'succeed',
+          type: 'succees',
           code: 40000,
           message: '用户登录成功',
           result: {
-            token: token
+            token: token.token
           }
         });
-
       });
-
     });
-  })
+  });
 });
 
 module.exports = router;

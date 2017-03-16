@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var tokenGen = require('token');
 
-var tokenGen = require('token-gen');
+var config = require('config-lite');
 
 var tokenSchema = new Schema({
   token: { type: String, index: true },
@@ -9,16 +10,16 @@ var tokenSchema = new Schema({
 });
 
 tokenSchema.statics.createToken = function (userid, cb) {
-  var newToken = tokenGen({
-    tokenLength: 100,
-    alphabet: '0123456789ACDEFGHJKLMNPQRTUVWXYZ'
+  var newToken = tokenGen.generate(userid, {
+    secret: config.token.secret,
+    timeStep: config.token.maxAge
   });
-  console.log(newToken);
+
   this.create({
-    token: newToken.toString(),
+    token: newToken,
     userid: new mongoose.Types.ObjectId(userid)
   }, function (err, token) {
-    cb(err, token.token);
+    cb(err, token);
   });
 };
 
