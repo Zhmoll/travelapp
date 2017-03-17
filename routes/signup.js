@@ -35,7 +35,7 @@ router.post('/', checkNotLogin, function (req, res, next) {
         res.json({
           type: 'success',
           code: 40000,
-          message: '用户登录成功',
+          message: '用户注册成功',
           result: {
             token: token.token,
             user: {
