@@ -7,7 +7,7 @@ function checkLogin(req, res, next) {
     res.json({
       type: 'error',
       code: 42001,
-      message: '您尚未登录或登录凭证无效！'
+      message: '您尚未登录或登录凭证无效'
     });
     return;
   }
@@ -19,7 +19,7 @@ function checkLogin(req, res, next) {
       res.json({
         type: 'error',
         code: 42001,
-        message: '您尚未登录或登录凭证无效！'
+        message: '您尚未登录或登录凭证无效'
       });
       return;
     }
