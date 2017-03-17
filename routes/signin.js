@@ -4,7 +4,9 @@ var router = express.Router();
 var User = require('../models/users');
 var Token = require('../models/token');
 
-router.post('/', function (req, res, next) {
+var checkNotLogin = require('../middlewares/checkNotLogin');
+
+router.post('/', checkNotLogin, function (req, res, next) {
   var credential = req.body.credential;
 
   User.findOne({
