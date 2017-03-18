@@ -1,0 +1,6 @@
+{ 
+    "_id" : ObjectId("58ccf2c8f92e71212032f03c"), 
+    "name" : "呼和浩特", 
+    "province" : "内蒙古", 
+    "enable" : true
+}
