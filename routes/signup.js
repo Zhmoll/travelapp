@@ -43,7 +43,8 @@ router.post('/', checkNotLogin, function (req, res, next) {
               username: user.username,
               nickname: user.nickname,
               gender: user.gender,
-              avatar: user.avatar
+              avatar: user.avatar,
+              authority: 1
             }
           }
         });

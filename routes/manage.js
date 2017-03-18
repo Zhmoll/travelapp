@@ -4,6 +4,9 @@ var router = express.Router();
 var City = require('../models/cities');
 var Item = require('../models/items');
 
+// 管理员ACL
+router.use('/', require('../middlewares/checkAdmin'));
+
 // 获得所有城市
 router.get('/city', function (req, res, next) {
   City.find({}, function (err, cities) {

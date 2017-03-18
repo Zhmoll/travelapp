@@ -4,11 +4,16 @@ var tokenGen = require('token');
 
 var config = require('config-lite');
 
+var option = {
+  _id:false
+};
+
 var tokenSchema = new Schema({
   token: { type: String, index: true },
   userid: { type: Schema.ObjectId },
+  authority: Number,
   createdAt: { type: Date, default: Date.now(), expires: config.token.maxAge }
-});
+}, option);
 
 tokenSchema.statics.createToken = function (userid, cb) {
   var newToken = tokenGen.generate(userid, {

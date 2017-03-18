@@ -2,10 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var citySchema = new Schema({
-  name: {
-    type: String,
-    index: true
-  },
+  name: { type: String, index: true },
   province: {
     type: String,
     enum: ['北京', '上海', '天津', '重庆', '河北', '山西', '辽宁', '吉林', '黑龙江', '江苏',

@@ -20,6 +20,7 @@ var itemSchema = new Schema({
     title: String,
     content: String
   }],
+  cost: String,
   opentime: String,       // 运营时间
   tips: [String],         // 提示
   contact: [{             // 联系方式
@@ -31,6 +32,24 @@ var itemSchema = new Schema({
   }],
   cityid: Schema.ObjectId // 关联的城市
 });
+
+itemSchema.virtual('score').get(function () {
+  var Reply = require('./item-replies');
+
+  Reply.find({ itemid: this.id, display: true }, "score", function (err, replies) {
+    if (err) return 0;
+
+    if (replies.length == 0) return 5;
+    var sum = 0;
+    replies.forEach(function (reply) {
+      sum += reply.score / replies.length
+    });
+    return sum;
+  });
+});
+
+// itemSchema.set('toJSON', { virtuals: true });
+// itemSchema.set('toObject', { virtuals: true });
 
 var Item = mongoose.model('Item', itemSchema);
 

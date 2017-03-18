@@ -31,8 +31,8 @@ router.get('/:cityname', function (req, res, next) {
     Item
       .where('cityid').equals(city.id)
       .where('enable').equals(true)
-      .select('-enable -cityid')
-      .desc('type')
+      .select('name type intros')
+      .sort('type')
       .exec(function (err, items) {
         if (err) return next(err);
         return res.json({
