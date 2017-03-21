@@ -31,7 +31,7 @@ var itemSchema = new Schema({
     content: String
   }],
   cityid: Schema.ObjectId // 关联的城市
-});
+}, { versionKey: false });
 
 itemSchema.virtual('score').get(function () {
   var Reply = require('./item-replies');

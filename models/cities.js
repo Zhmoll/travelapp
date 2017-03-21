@@ -11,7 +11,7 @@ var citySchema = new Schema({
       '香港', '澳门']
   },
   enable: Boolean
-});
+}, { versionKey: false });
 
 var City = mongoose.model('City', citySchema);
 

@@ -8,7 +8,7 @@ var itemReplySchema = new Schema({
   content: String,
   score: { type: Number, min: 0, max: 5 },
   display: { type: Boolean, default: true }
-});
+}, { versionKey: false });
 
 var ItemReply = mongoose.model('ItemReply', itemReplySchema);
 

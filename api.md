@@ -42,6 +42,7 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 | 40001 | error   | 用户已存在                  |                              |
 | 41000 | success | 登录成功                   |                              |
 | 41001 | error   | 用户名或密码错误               |                              |
+| 41002 | error   | 凭据数据格式不正确              |                              |
 | 42000 | success | 注销成功                   |                              |
 | 42001 | error   | 您尚未登录或登录凭证无效           | 操作需要登录的api接口时，而未给予正确token时产生 |
 | 42002 | error   | 您已经登录                  | 操作不需要登录的api接口时，而用户登录的状态下产生   |
@@ -110,6 +111,19 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 ```
 
 请用合适的字段填充发送中看起来该填充的内容。其中`profile`字段可选，如果不在注册时发送，那么也不会在返回时出现`profile`字段中的内容。
+
+一个`User`模型是这样的，下面就不再重复了，其中`password`字段和`authority`字段不返回给客户端，`authority`不接受修改。
+
+```javascript
+{
+    username: String,
+    password: String,
+    avatar: String,
+    gender: String,
+    nickname: String,
+    authority: Number
+}
+```
 
 如果已经是登录的状态下，即1、有`Authorization`字段或者附加了`accesstoken`querystring，2、其值有效，那么会返回一个简单json对象42002。
 
@@ -184,9 +198,8 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 
 返回
 
-```
+```json
 {
-    {
     "type": "success",
     "code": "43000",
     "message": "用户信息修改成功",
@@ -198,7 +211,7 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
               "gender": "男",
               "avatar":"http://cdn.etuan.org/img/wx-etuan.jpg"
          }
-    }
+     }
 }
 ```
 

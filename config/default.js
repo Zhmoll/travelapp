@@ -4,6 +4,6 @@ module.exports = {
   token: {
     secret: 'zhmolldashuaibi',
     timeStep: 5,
-    maxAge: 60 * 60 * 24 * 3
+    maxAge: 60 * 60 * 24 * 7
   }
 };

@@ -5,7 +5,8 @@ var tokenGen = require('token');
 var config = require('config-lite');
 
 var option = {
-  _id:true
+  _id: true,
+  versionKey: false
 };
 
 var tokenSchema = new Schema({

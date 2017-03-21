@@ -5,7 +5,16 @@ const Token = require('../models/token');
 const checkNotLogin = require('../middlewares/checkNotLogin');
 
 router.post('/', checkNotLogin, function (req, res, next) {
-  var credential = req.body.credential;
+  const credential = req.body.credential;
+  const profile = req.body.profile;
+
+  if (!credential || !credential.username || !credential.password) {
+    return res.json({
+      type: 'error',
+      code: 41002,
+      message: '凭据数据格式不正确'
+    });
+  }
 
   User.findOne({
     username: credential.username
@@ -20,14 +29,21 @@ router.post('/', checkNotLogin, function (req, res, next) {
       });
     }
 
-    User.create({
+    let entity = {
       username: credential.username,
-      password: credential.password
-    }, function (err, user) {
+      password: credential.password,
+      avatar: profile && profile.avatar,
+      gender: profile && profile.gender,
+      nickname: profile && profile.nickname
+    };
+
+    User.create(entity, function (err, user) {
       if (err) return next(err);
 
       Token.createToken(user.id, function (err, token) {
         if (err) return next(err);
+        user.password = undefined;
+        user.authority = undefined;
         res.setHeader('Authorization', token.token);
         res.json({
           type: 'success',
@@ -35,13 +51,7 @@ router.post('/', checkNotLogin, function (req, res, next) {
           message: '用户注册成功',
           result: {
             token: token.token,
-            user: {
-              _id: user._id,
-              username: user.username,
-              nickname: user.nickname,
-              gender: user.gender,
-              avatar: user.avatar
-            }
+            user: user
           }
         });
       });

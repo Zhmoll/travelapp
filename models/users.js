@@ -11,7 +11,7 @@ var userSchema = new Schema({
   gender: String,
   nickname: String,
   authority: { type: Number, default: 1 }
-});
+}, { versionKey: false });
 
 var User = mongoose.model('User', userSchema);
 
