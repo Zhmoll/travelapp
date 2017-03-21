@@ -19,7 +19,7 @@
 	"type": "success",
 	"code": "41000",
 	"message": "登录成功",
-    "result": { body }
+  "result": { body }
 }
 ```
 
