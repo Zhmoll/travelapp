@@ -1,4 +1,4 @@
-module.exports = function (app) {
+module.exports = (app) => {
   app.use('/api/homepage', require('./homepage'));
 
   app.use('/api/city', require('./city'));

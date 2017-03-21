@@ -1,10 +1,8 @@
-var express = require('express');
-var router = express.Router();
+const router = require('express').Router();
+const User = require('../models/users');
+const Token = require('../models/token');
 
-var User = require('../models/users');
-var Token = require('../models/token');
-
-var checkNotLogin = require('../middlewares/checkNotLogin');
+const checkNotLogin = require('../middlewares/checkNotLogin');
 
 router.post('/', checkNotLogin, function (req, res, next) {
   var credential = req.body.credential;
@@ -16,18 +14,17 @@ router.post('/', checkNotLogin, function (req, res, next) {
     if (err) return next(err);
 
     if (!user) {
-      res.json({
+      return res.json({
         type: 'error',
         code: 41001,
         message: '用户名或密码错误'
       });
-      return;
     }
 
     Token.createToken(user.id, function (err, token) {
       if (err) return next(err);
       res.setHeader('Authorization', token.token);
-      res.json({
+      return res.json({
         type: 'success',
         code: 41000,
         message: '登录成功',

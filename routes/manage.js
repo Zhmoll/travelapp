@@ -1,8 +1,6 @@
-var express = require('express');
-var router = express.Router();
-
-var City = require('../models/cities');
-var Item = require('../models/items');
+const router = require('express').Router();
+const City = require('../models/cities');
+const Item = require('../models/items');
 
 // 管理员ACL
 router.use('/', require('../middlewares/checkAdmin'));
@@ -11,7 +9,6 @@ router.use('/', require('../middlewares/checkAdmin'));
 router.get('/city', function (req, res, next) {
   City.find({}, function (err, cities) {
     if (err) return next(err);
-
     return res.json({
       type: 'success',
       code: 80004,

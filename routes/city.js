@@ -1,8 +1,6 @@
-var express = require('express');
-var router = express.Router();
-
-var City = require('../models/cities');
-var Item = require('../models/items');
+const router = require('express').Router();
+const City = require('../models/cities');
+const Item = require('../models/items');
 
 router.get('/:cityname', function (req, res, next) {
   var cityname = req.params.cityname;

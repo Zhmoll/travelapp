@@ -1,10 +1,8 @@
-var express = require('express');
-var router = express.Router();
+const router = require('express').Router();
+const User = require('../models/users');
+const Token = require('../models/token');
 
-var User = require('../models/users');
-var Token = require('../models/token');
-
-var checkNotLogin = require('../middlewares/checkNotLogin');
+const checkNotLogin = require('../middlewares/checkNotLogin');
 
 router.post('/', checkNotLogin, function (req, res, next) {
   var credential = req.body.credential;
@@ -15,12 +13,11 @@ router.post('/', checkNotLogin, function (req, res, next) {
     if (err) return next(err);
 
     if (user) {
-      res.json({
+      return res.json({
         type: 'error',
         code: 40001,
         message: '用户已存在'
       });
-      return;
     }
 
     User.create({
@@ -43,8 +40,7 @@ router.post('/', checkNotLogin, function (req, res, next) {
               username: user.username,
               nickname: user.nickname,
               gender: user.gender,
-              avatar: user.avatar,
-              authority: 1
+              avatar: user.avatar
             }
           }
         });

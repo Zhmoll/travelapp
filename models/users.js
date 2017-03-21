@@ -10,7 +10,7 @@ var userSchema = new Schema({
   avatar: String,
   gender: String,
   nickname: String,
-  authority: Number
+  authority: { type: Number, default: 1 }
 });
 
 var User = mongoose.model('User', userSchema);

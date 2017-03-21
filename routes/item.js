@@ -1,13 +1,11 @@
-var express = require('express');
-var router = express.Router();
+const router = require('express').Router();
+const Item = require('../models/items');
+const Reply = require('../models/item-replies');
 
-var checkLogin = require('../middlewares/checkLogin');
-
-var Item = require('../models/items');
-var Reply = require('../models/item-replies');
+const checkLogin = require('../middlewares/checkLogin');
 
 router.use('/:itemid', function (req, res, next) {
-  var itemid = req.params.itemid;
+  const itemid = req.params.itemid;
 
   Item.findById(itemid, function (err, item) {
     if (!item || !item.enable) {
@@ -24,7 +22,7 @@ router.use('/:itemid', function (req, res, next) {
 });
 
 router.get('/:itemid', function (req, res, next) {
-  var item = res.locals.item;
+  const item = res.locals.item;
   item.enable = undefined;
   return res.json({
     type: "success",
@@ -35,11 +33,11 @@ router.get('/:itemid', function (req, res, next) {
 });
 
 router.get('/:itemid/feedback', checkLogin, function (req, res, next) {
-  var itemid = req.params.itemid;
-  var userid = res.locals.userid;
-  var body = req.body;
+  const itemid = req.params.itemid;
+  const userid = res.locals.userid;
+  const body = req.body;
 
-  var reply = {
+  const reply = {
     userid: userid,
     itemid: itemid,
     content: body.content,
@@ -51,7 +49,7 @@ router.get('/:itemid/feedback', checkLogin, function (req, res, next) {
 
     return res.json({
       type: "success",
-      code: 43000,
+      code: 44000,
       message: "评论成功"
     });
   });

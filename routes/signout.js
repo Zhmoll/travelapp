@@ -1,7 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var Token = require('../models/token');
-var checkLogin = require('../middlewares/checkLogin');
+const router = require('express').Router();
+const Token = require('../models/token');
+const checkLogin = require('../middlewares/checkLogin');
 
 router.get('/', checkLogin, function (req, res, next) {
   Token.find({ token: res.locals.token }, function (err, tokens) {
@@ -11,7 +10,7 @@ router.get('/', checkLogin, function (req, res, next) {
       token.remove();
     });
 
-    res.json({
+    return res.json({
       type: 'success',
       code: 42000,
       message: '注销成功'
