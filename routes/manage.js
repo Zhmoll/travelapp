@@ -12,7 +12,8 @@ router.get('/city', function (req, res, next) {
     return res.json({
       type: 'success',
       code: 80004,
-      message: '获得城市成功'
+      message: '获得城市成功',
+      result: cities
     });
   });
 });
@@ -43,9 +44,9 @@ router.get('/city/:id', function (req, res, next) {
 
 // 获得一个城市和其所有项目
 router.get('/city/:id/items', function (req, res, next) {
-  var cityid = req.params.id;
+  const cityid = req.params.id;
 
-  City.findById(cityid, function (err, city) {
+  City.findById(cityid, null, { lean: true }, function (err, city) {
     if (err) return next(err);
 
     if (!city) {
@@ -58,15 +59,12 @@ router.get('/city/:id/items', function (req, res, next) {
 
     Item.find({ cityid: cityid }, function (err, items) {
       if (err) return next(err);
-
-      var completeCity = city;
-      completeCity.items = items;
-
+      city.items = items;
       return res.json({
         type: 'success',
         code: 80006,
         message: '获得城市和其项目成功',
-        result: completeCity
+        result: city
       });
     });
   });
