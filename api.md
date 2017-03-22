@@ -70,7 +70,19 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 
 ## 二、api内容
 
-### 1、登录机制
+### 1、登录机制与用户模型
+一个`User`模型是这样的，下面就不再重复了，其中`password`字段和`authority`字段不返回给客户端，`authority`不接受修改。
+
+```javascript
+{
+    username: String,
+    password: String,
+    avatar: String,
+    gender: String,
+    nickname: String,
+    authority: Number
+}
+```
 
 #### 1）登录
 
@@ -80,14 +92,14 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 
 ```json
 {
-  "credential":{
-    "username":"Zhmoll",
-    "password":"THISISPASSWORD"
-  },
-  "profile":{
-    "nickname": "抱朴守拙的小小薇",
-    "gender": "男"
-  }
+    "credential":{
+		"username":"Zhmoll",
+		"password":"THISISPASSWORD"
+  	},
+  	"profile":{
+    	"nickname": "抱朴守拙的小小薇",
+    	"gender": "男"
+  	}
 }
 ```
 
@@ -97,7 +109,7 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 {
 	"type": "success",
 	"code": "41000",
-	"message": "登录成功"
+	"message": "登录成功",
   	"result": {
     	"token": "xBZeLCRNrzUeWfHz6WO4Bk9l1HZeopqlnG4EMNx0C3ewCHlmUdtNzcCdnisOJoZTvtglq9agFuzvZL3rZEKoWw==",
          "user": {
@@ -112,19 +124,6 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 
 请用合适的字段填充发送中看起来该填充的内容。其中`profile`字段可选，如果不在注册时发送，那么也不会在返回时出现`profile`字段中的内容。
 
-一个`User`模型是这样的，下面就不再重复了，其中`password`字段和`authority`字段不返回给客户端，`authority`不接受修改。
-
-```javascript
-{
-    username: String,
-    password: String,
-    avatar: String,
-    gender: String,
-    nickname: String,
-    authority: Number
-}
-```
-
 如果已经是登录的状态下，即1、有`Authorization`字段或者附加了`accesstoken`querystring，2、其值有效，那么会返回一个简单json对象42002。
 
 注意，要将该`result`中的内容持久化到本地，在web端是`localStorage`，在安卓端是`Sqlite`，并且在其他页面时显示应有的头像、昵称等信息，在发送其他api时附加`token`内容至`Authorization`。
@@ -137,7 +136,7 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 
 ```json
 {
-	"type": "success,
+	"type": "success",
 	"code": "42000",
 	"message": "注销成功"
 }
@@ -145,7 +144,7 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 
 如果已经是未登录的状态下，即没有`Authorization`字段并且没附加`accesstoken`querystring，那么会返回一个简单json对象42001。
 
-### 3）登录
+#### 3）登录
 
 `post` `/api/signin`
 
@@ -181,7 +180,7 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 
 如果密码错误，那么自然会出现41001的情况。
 
-### 4）修改个人信息
+#### 4）修改个人信息
 
 `put` `/api/profile`
 
@@ -217,4 +216,153 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 
 当然啦，没有错误的返回情况。
 
-### 2、城市模型
+### 2、城市模型与项目模型
+
+在城市模型中，`province`的取值被限制在这些内容之内。`enable`是管理员是否在添加城市之后将城市上线的标志位。
+
+```javascript
+{
+	name: String,
+    province: {
+    	type: String,
+    	enum: ['北京', '上海', '天津', '重庆', '河北', '山西', '辽宁', '吉林', '黑龙江', '江苏', '浙江', '安徽', '福建', '江西', '山东', '河南', '湖北', '湖南', '广东', '海南', '四川', '贵州', '云南', '陕西', '甘肃', '青海', '台湾', '内蒙古', '西藏', '广西', '宁夏', '新疆', '香港', '澳门']
+    },
+	enable: Boolean
+}
+```
+
+#### 1）获取城市
+
+`get` `/api/city/{cityname}`
+
+要获取城市所拥有的特色景观、特产等项目，首先就需要获取城市id。而城市id的获取则需要请求这样的api。
+
+返回
+
+```json
+{
+  	"type":"success",
+  	"code":50000,
+  	"message":"获取城市成功",
+  	"result":{
+      	"_id":"58ccf2c8f92e71212032f03c",
+      	"name":"呼和浩特",
+      	"province":"内蒙古",
+      	"enable":true,
+      	"items":[
+          	{
+              	"_id":"58ccf522f92e71212032f03d",
+              	"name":"希拉穆仁大草原",
+              	"type":"景点",
+              	"intros":"蜚声海内外的旅游避暑胜地,有独特浓郁的蒙古民族文化风情。"
+            },
+            {
+      			"_id":"58ccf522f92e71212032f03e",
+      			"name":"响沙湾",
+      			"type":"景点",
+      			"intros":"集观光与休闲度假为一体的特大型综合型的沙漠休闲景区。"
+    		},
+        	{
+      			"_id":"58ccf522f92e71212032f03f",
+      			"name":"烤全羊",
+      			"type":"美食",
+      			"intros":"蒙古族招待贵客的传统佳肴。"
+    		}
+        ]	
+    }
+}
+```
+当然，也有可能返回50001和50002情况。其中，50002情况是该城市的`enable`被设置为`false`。客户端需要正确地渲染该页面，显示该城市尚未启用。
+
+同时，会查询所有该城市的特色项目并安放在`items`之中，这些项目只有一个比较缩略的内容，仅仅返回`_id`、`name`、`type`和`intros`。如果需要进一步查询，请使用itemid使用相应api检索。
+
+#### 2）获取项目详情
+
+项目模型如下：
+
+```javascript
+{
+  	name: String,           // 项目名
+  	type: {                 // 类别
+    	type: String,
+    	enum: ['景点', '美食', '特产', '民宿', '文化']
+  	},
+  	enable: Boolean,        // 启用状态
+  	intros: String,         // 简介
+  	details: String,        // 详细介绍
+  	address: String,        // 地理位置 - 文字描述
+  	location: [Number],     // 地理位置 - 经纬度
+  	traffic: String,        // 交通方式
+  	recommend: [{           // 推荐的事物
+    	title: String,
+    	content: String
+  	}],
+  	cost: String,
+  	opentime: String,       // 运营时间
+  	tips: [String],         // 提示
+  	contact: [{             // 联系方式
+    	method: {
+      		type: String,
+      		enum: ['email', 'phone', 'wechat', 'QQ']
+    	},
+    	content: String
+  	}]
+}
+```
+
+项目模型比较复杂，也遵循着这样的一个原则——没有数据就不返回，不需要的数据就不用提交。
+
+在启用状态`enable`中，事实上，普通注册用户不会返回该值为`false`的内容。`name``type``intros`在上一个接口中予以展示，所以建议在后面管理员添加项目时必填，虽然并未在数据库端加以限制。`location`是一个包含经纬度的二元数值。第一项为经度，第二项为纬度，例如`[40.8474610000,111.7585180000]`。在推荐`recomend`数组中，需要填写`title`和`content`才能作为完整的一项内容。在`tips`中，注意它也是一个数组，需要多少项内容，放进去多少个内容。联系方式`contact`也是一个数组，每一项内容需要包含`method`和`content`。例如一个合适的联系方式：
+
+```json
+{
+	[
+      	"method":"phone",
+  		"content":"18888888888"
+	],
+  	[
+      	"method":"wechat",
+  		"content":"Zhmoll"
+  	]
+}
+```
+
+那么，接下来是获取项目的api
+
+`get` `/api/item/{itemid}`
+
+返回
+
+```json
+{
+  	"type":"success",
+  	"code":51000,
+  	"message":"项目获取成功",
+  	"result":{
+      	"_id":"58ccf522f92e71212032f03d",
+      	"name":"希拉穆仁大草原",
+      	"type":"景点",
+      	"intros":"蜚声海内外的旅游避暑胜地,有独特浓郁的蒙古民族文化风情。",
+      	"details":"希拉穆仁草原位于内蒙古自治区达尔罕茂明安联合旗，是蜚声海内外的旅游避暑胜地。希拉穆仁蒙古语意为“黄河”希拉穆仁草原旅游俗称“召河”，因在希拉穆仁河畔有一座清代喇嘛召庙“普会寺”而得名。\n希拉穆仁草原是内蒙最早开壁的草原旅游点，在呼和浩特以北100公里处，海拔1700米，丘陵起伏，芳草萋萋，空气清新，一派草原风光。昼夜温较大，盛夏之夜，也凉爽似秋。\n在希拉穆仁草原，每年都要举行盛大的草原那达慕活动，其中的赛马、摔跤和射箭三项竞技是蒙古族“男儿三艺”。在这里，游客既可以看到勇敢剽悍的草原健儿的精湛表演，也可以亲自披挂上阵，大显身手，一抒豪情。还可以参与隆重的“祭敖包”仪式，享用草原民族典型的风味餐饮，体会独特浓郁的蒙古民族文化风情。",
+      	"traffic":"呼和浩特距离希拉穆仁草原大约75公里，车程大概1个多小时，包车和自驾前往都很方便；如果选择乘车，可以从呼市长途汽车站乘坐去往召河的长途车；或者搭乘前往达茂旗方向的车，在召河下车即可。用时5小时。",
+      	"cost":"成人80元，儿童40元",
+      	"opentime":"8:00-20:00",
+      	"cityid":"58ccf2c8f92e71212032f03c",
+      	"contact":[],
+      	"tips":[
+          	"草原昼夜温差大,到草原旅游一定要带外套和长裤。同时,由于天气变化无常,要准备防雨衣物。",
+          	"内蒙古地区地处高原,日照时间长,光线较强,需要准备遮阳帽、太阳镜、防晒霜。","在草原上住宿,夜晚难以辨别方向,带上手电筒是必要的。草原面积很大,外出要结伴同行,小心迷路。","在草原上住宿,一般不配备洗漱用品、拖鞋,请提前自备。",
+          	"参加草原各项活动时,要特别注意安全,尤其是骑马等活动要十分注意安全。","初来乍到者有时难以适应草原上的饮用水,有必要准备一些矿泉水。",
+          	"有大片沼泽地的草原,游客要特别注意,不要随便进入,以免发生危险。","在草原上开车、骑马要在指定范围内活动,以免迷失方向或破坏草场。"
+        ],
+      "recommend":[],
+      "location":[40.847461,111.758518]
+    }
+}
+```
+
+注意其中的内容的表达方式。不存在的字符串内容不返回，不存在的数组内容的数组为空。可能你需要对`details`的显示方式加以处理，我们可以认为`details`是一个富文本的表达方式，里面可以存在图片。具体内容等设置出来再说。
+
+当找不到项目时，返回51001。
+
+###3、管理员api
