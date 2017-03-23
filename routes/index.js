@@ -13,4 +13,5 @@ module.exports = (app) => {
   app.use('/api/signout', require('./signout'));
 
   app.use('/api/manage', require('./manage'));
+  app.use('/apidoc', function (req, res, next) {
 };
