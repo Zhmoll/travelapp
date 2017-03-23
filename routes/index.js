@@ -1,5 +1,5 @@
 module.exports = (app) => {
-  app.use('/api', function (req, res, next) {
+  app.use('/apidoc', function (req, res, next) {
     res.redirect('https://github.com/Zhmoll/travelapp/blob/dev/api.md');
   });
   
@@ -13,5 +13,4 @@ module.exports = (app) => {
   app.use('/api/signout', require('./signout'));
 
   app.use('/api/manage', require('./manage'));
-  app.use('/apidoc', function (req, res, next) {
 };
