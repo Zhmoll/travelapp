@@ -22,30 +22,6 @@ router.get('/city', function (req, res, next) {
 router.get('/city/:id', function (req, res, next) {
   var cityid = req.params.id;
 
-  City.findById(cityid, function (err, city) {
-    if (err) return next(err);
-
-    if (!city) {
-      return res.json({
-        type: 'error',
-        code: 80001,
-        message: '未找到该城市'
-      });
-    }
-
-    return res.json({
-      type: 'success',
-      code: 80004,
-      message: '获得城市成功',
-      result: city
-    });
-  });
-});
-
-// 获得一个城市和其所有项目
-router.get('/city/:id/items', function (req, res, next) {
-  const cityid = req.params.id;
-
   City.findById(cityid, null, { lean: true }, function (err, city) {
     if (err) return next(err);
 
@@ -57,25 +33,36 @@ router.get('/city/:id/items', function (req, res, next) {
       });
     }
 
-    Item.find({ cityid: cityid }, function (err, items) {
-      if (err) return next(err);
-      city.items = items;
-      return res.json({
-        type: 'success',
-        code: 80006,
-        message: '获得城市和其项目成功',
-        result: city
+    Item
+      .where('cityid').equals(city._id)
+      .select('intros type name enable')
+      .sort('type')
+      .exec(function (err, items) {
+        if (err) return next(err);
+        city.items = items;
+        return res.json({
+          type: 'success',
+          code: 80004,
+          message: '获得城市成功',
+          result: city
+        });
       });
-    });
   });
 });
 
 // 添加一个新城市
 router.post('/city', function (req, res, next) {
   var body = req.body;
-
   var name = body.name;
   var province = body.province;
+
+  if (!name || !province) {
+    return res.json({
+      type: 'error',
+      code: 80007,
+      message: '添加城市信息为空'
+    });
+  }
 
   City.create({
     name: name,
@@ -85,7 +72,7 @@ router.post('/city', function (req, res, next) {
     if (err) return next(err);
 
     return res.json({
-      type: 'error',
+      type: 'success',
       code: 80000,
       message: '添加城市成功',
       result: city
@@ -181,7 +168,7 @@ router.post('/item', function (req, res, next) {
       code: 80005,
       message: '添加项目成功',
       result: item
-    })
+    });
   });
 });
 

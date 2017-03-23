@@ -32,7 +32,6 @@ router.get('/:cityname', function (req, res, next) {
       .exec(function (err, items) {
         if (err) return next(err);
         city.items = items;
-        console.log(items)
         return res.json({
           type: 'success',
           code: 50000,

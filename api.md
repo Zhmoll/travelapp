@@ -60,6 +60,7 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 | 80004 | success | 获得城市成功                 |                              |
 | 80005 | success | 删除该城市成功                |                              |
 | 80006 | success | 获得城市和其项目成功             |                              |
+| 80007 | eerror  | 添加城市信息为空               |                              |
 | 81000 | success | 添加项目成功                 |                              |
 | 81001 | error   | 未找到该项目                 |                              |
 | 81002 | success | 修改项目成功                 |                              |
@@ -366,3 +367,205 @@ api统一回复的格式中，code用于标识服务器计算的状态，客户�
 当找不到项目时，返回51001。
 
 ###3、管理员api
+
+所有管理员api都是需要用管理员账户登录后，获取管理员token进行操作的。管理员token也和普通用户的token一样添加到相应位置即可使用。非管理员token或者无token会产生90001结果。
+
+#### 1）获取所有城市
+
+`get` `/api/manage/city`
+
+返回
+
+```json
+{
+    "type": "success",
+    "code": 80004,
+    "message": "获得城市成功",
+    "result": [
+    {
+        "_id": "58ccf2c8f92e71212032f03c",
+        "name": "呼和浩特",
+        "province": "内蒙古",
+        "enable": true
+    }
+  ]
+}
+```
+
+注意`result`是一个数组，也就是说，有多少个城市被创建出来，就会返回多少个城市。当然，一开始是没有任何城市的话，那么`result`是空数组。怎么判断呢？`result.length()==0`。
+
+这个api只返回城市列表，并不会把该城市所有项目内容都返回。需要获取该城市所有项目内容或修改该城市，则需要拿到`_id`访问以下接口进行。
+
+#### 2）获得某指定城市
+
+`get`  `/api/manage/city/{cityid}`
+
+返回
+
+```json
+{
+    "type": "success",
+    "code": 80006,
+    "message": "获得城市成功",
+    "result": {
+        "_id": "58ccf2c8f92e71212032f03c",
+        "name": "呼和浩特",
+        "province": "内蒙古",
+        "enable": true,
+        "items":[{
+       		"_id": "58ccf522f92e71212032f03d",
+        	"name": "希拉穆仁大草原",
+        	"type": "景点",
+        	"intros": "蜚声海内外的旅游避暑胜地,有独特浓郁的蒙古民族文化风情。"
+		    "enable": true
+      	}]
+    }
+}
+```
+
+与上面的接口对比，这个接口返回的result是一个对象而不是数组。这个城市会自动附上简练的项目信息，这些项目信息同样是一个数组。
+
+如果获取失败（没有这个id的城市），那么就会返回80001。
+
+#### 3）添加一个城市
+
+`post` `/api/manage/city`
+
+发送
+
+```json
+{
+  	"name":"呼和浩特",
+  	"province":"内蒙古"
+}
+```
+
+返回
+
+```
+{
+    "type": "success",
+    "code": 80000,
+    "message": "添加城市成功",
+    "result": {
+        "_id": "58ccf2c8f92e71212032f03c",
+        "name": "呼和浩特",
+        "province": "内蒙古",
+        "enable": false
+    }
+}
+```
+
+如果上面发送的信息字段不正确，会获得80007结果。
+
+#### 4）修改一个城市
+
+`put` `/api/manage/city/{cityid}`
+
+发送
+
+```json
+{
+  	"name":"呼和浩特",
+  	"province":"内蒙古",
+  	"enable": true
+}
+```
+
+返回
+
+```json
+{
+    "type": "success",
+    "code": 80002,
+    "message": "修改城市成功",
+    "result": {
+        "_id": "58ccf2c8f92e71212032f03c",
+        "name": "呼和浩特",
+        "province": "内蒙古",
+        "enable": true
+    }
+}
+```
+
+发送的内容中，如果不需要修改的就不要发送了，只把需要修改的地方发过来就行
+
+#### 5）删除一个城市
+
+`delete` `/api/manage/city/{cityid}`
+
+返回
+
+```json
+{
+      "type": success",
+      "code": 80005,
+      "message": "删除该城市成功"
+}
+```
+
+值得注意的是，当选择的城市的`enable`为`true`，即城市启用的时候，这个城市是不允许删除的，返回80003结果。
+
+#### 6）添加一个项目
+
+`post` `/api/manage/item`
+
+发送
+
+```
+name、type、intros、details、address、location、traffic、recommend、opentime、tips、contact、.contact、cityid中任意项目即可。请参照前面的项目格式发送。
+```
+
+返回
+
+```
+参照前面二、2、2）的格式。
+```
+
+注意，在添加项目的时候不能立刻就让`enable`为`true`。需要在修改项目时修改。
+
+#### 7）获得一个项目
+
+`get` `/api/manage/item/{itemid}`
+
+返回
+
+```
+参照前面二、2、2）的格式。
+```
+
+与前面二、2、2）不同的是，这个多返回了一个`enable`键，毕竟是管理员方法嘛。
+
+#### 8）修改一个项目
+
+`put` `/api/manage/item/{itemid}`
+
+发送
+
+```
+name、type、enalbe、intros、details、address、location、traffic、recommend、opentime、tips、contact、.contact、cityid中任意项目即可。请参照前面的项目格式发送。
+```
+
+返回
+
+```
+参照前面二、2、2）的格式。
+```
+
+与前面二、2、2）不同的是，这个多返回了一个`enable`键，毕竟是管理员方法嘛。
+
+#### 9）删除一个项目
+
+`delete` `/api/manage/item/{itemid}`
+
+返回
+
+```json
+{
+      "type": "success",
+      "code": 81005,
+      "message": "删除该项目成功"
+}
+```
+
+与删除一个城市雷同。
